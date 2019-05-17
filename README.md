@@ -24,6 +24,7 @@ Input| Crop |Enc-Dec Attention| Prediction
 * PyAV
 ###### Optional for visualization
 * MoviePy
+* Imageio-ffmpeg
 * OpenCV
 * TensorBoard
 
