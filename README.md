@@ -103,10 +103,10 @@ lm=None, beam=0, bs=1, test_aug:0, horflip True: CER 0.3825, WER 0.583690
 
 For the best results, run a full beam search, using the language model
 and performing simple test-time augmentation in the form of horizontal flips.
-This will take a few hours to complete on a GPU and give WER of approx. 49%. 
 ```
 python main.py --gpu_id 0 --lip_model_path models/lrs2_lip_model --lm_path models/lrs2_language_model --data_path data/lrs2/main --data_list media/lrs2_test_samples.txt --graph_type infer --test_aug_times 2  --beam_size 35
 ```
+This will take a few hours to complete on a GPU and give WER of approx. 49%. 
 
 <!---
 ## Visual frontend
