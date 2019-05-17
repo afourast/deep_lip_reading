@@ -97,7 +97,7 @@ expected output:
 1242/1243 [============================>.] - ETA: 0s - cer: 0.3821 - wer: 0.5834
 (wer=100.0) SO-I'LL-ASK-YOU-AGAIN --> WHEN-I-SAW-HIM
 1243/1243 [==============================] - 951s 765ms/step - cer: 0.3825 - wer: 0.5837
-lm=None, beam=0, bs=1, test_aug:0, horflip True: val_cer 0.3825, val_wer 0.583690
+lm=None, beam=0, bs=1, test_aug:0, horflip True: CER 0.3825, WER 0.583690
 
 ```
 
