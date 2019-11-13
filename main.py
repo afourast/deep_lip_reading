@@ -106,7 +106,7 @@ def validation_loop(sess, g, n_batches, chars=None, val_gen = None, tb_writer=No
         for enc_tens, enc_val in zip(g.enc, enc): feed_dict[enc_tens] = enc_val
       else:
         feed_dict[g.enc] = enc
-      _preds, loss, cer = sess.run( [g.preds, g.mean_loss, g.cer], feed_dict)
+      _preds, pred_scores, loss = sess.run( [g.preds, g.scores, g.mean_loss], feed_dict)
       preds = _preds
 
     # use last loss
@@ -116,9 +116,16 @@ def validation_loop(sess, g, n_batches, chars=None, val_gen = None, tb_writer=No
     def decode_preds_to_chars(decoding):
       return ''.join([ chars[cid] for cid in decoding]).strip()
 
-    pred_sentences = [ decode_preds_to_chars(prr) for prr in preds]
+    pred_sentences = np.array([ [ decode_preds_to_chars(hyp) for hyp in prr ]  for prr in preds])
 
-    pred_words = [sent.split('-') for sent in  pred_sentences]
+    print('All predictions with scores')
+    # pred_sentences and pred_scores have dimensions b_id x n_hypotheses  (b_id is the index inside the batch)
+    for b_id in range(len(pred_sentences)):
+      for pr,sc in zip(pred_sentences[b_id], pred_scores[b_id]):
+        print ('---- {}, {}'.format(pr, sc))
+      print()
+
+    pred_words = [sent[0].split('-') for sent in  pred_sentences]
 
     edists = [rel_edist(gt, dec_str) for gt, dec_str in zip(gt_words, pred_words)]
     wer = np.mean(edists)
@@ -133,13 +140,13 @@ def validation_loop(sess, g, n_batches, chars=None, val_gen = None, tb_writer=No
       for gts, prs, wr in zip(gt_sents, pred_sentences, edists):
         print ('(wer={:.1f}) {} --> {}'.format(wr*100, gts, prs))
 
-    progbar.update(i+1, [ ('cer',cer), ('wer', wer) ] )
+    progbar.update(i+1, [ ('wer', wer) ] )
     Wer.append(wer)
 
-    Cer.append(cer)
+    # Cer.append(cer)
     Loss.append(loss)
 
-  return np.average(Loss), np.average(Cer), np.average(Wer)
+  return np.average(Loss), 0, np.average(Wer)
 
 def init_models_and_data(istrain):
 
@@ -160,6 +167,7 @@ def init_models_and_data(istrain):
                                           checkpoint_path=config.lm_path)
 
   TransformerGraphClass = graph_dict[config.graph_type]
+
 
   (shapes_in, dtypes_in), (shapes_out, dtypes_out) = \
     TransformerGraphClass.get_model_input_target_shapes_and_types()

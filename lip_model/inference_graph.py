@@ -86,8 +86,10 @@ class TransformerInferenceGraph(TransformerTrainGraph):
           decoded_ids._shape = tf.TensorShape([logits_bs, None])
       else:
         decoded_ids = decoded_ids[:, :config.top_beams, 1:]
+        # import ipdb; ipdb.set_trace(context=20)
+        scores = scores[:, :config.top_beams]
         if StrictVersion(tf.__version__) >= StrictVersion('1.5'):
-          decoded_ids.decoded_ids.__dict__['_shape_val'] = \
+          decoded_ids.__dict__['_shape_val'] = \
                               tf.TensorShape([logits_bs, config.top_beams, None])
         else:
           decoded_ids._shape = tf.TensorShape([logits_bs, config.top_beams, None])
